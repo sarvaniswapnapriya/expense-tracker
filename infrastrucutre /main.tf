@@ -1,4 +1,3 @@
-# infrastructure/main.tf
 
 provider "aws" {
   region = "us-east-1"
@@ -11,5 +10,5 @@ resource "aws_instance" "example" {
 
 resource "aws_s3_bucket" "bucket" {
   bucket = "my-bucket"
-  acl    = "nothing"  # This should be a valid ACL
+  acl    = "nothing"  
 }

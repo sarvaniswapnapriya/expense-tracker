@@ -1,5 +1,3 @@
-# .circleci/config.yml
-
 version: 2.1
 
 executors:
@@ -21,7 +19,7 @@ jobs:
 
       - run:
           name: Lint JavaScript code
-          command: npm run lint  # Will fail due to syntax error in script.js
+          command: npm run lint
 
   yaml_lint:
     docker:
@@ -37,7 +35,7 @@ jobs:
       - run:
           name: Lint YAML files
           command: |
-            yaml-lint **/*.yaml || true  # Will fail due to syntax error in config.yaml
+            yaml-lint **/*.yaml || true
 
   gitleaks:
     docker:
@@ -47,8 +45,9 @@ jobs:
       - run:
           name: Run Gitleaks
           command: |
+            echo "AWS_SECRET_ACCESS_KEY=FAKE_SECRET_KEY_12345" > app.py
             gitleaks detect --source . --report-format json --report-path gitleaks-report.json
-            cat gitleaks-report.json  # Will report a fake secret in app.py
+            cat gitleaks-report.json
 
   build:
     executor: python-executor
@@ -62,11 +61,13 @@ jobs:
 
       - run:
           name: Install dependencies
-          command: npm install
+          command: |
+            echo '{"dependencies": {"express": "4.0.0"}}' > package.json
+            npm install
 
       - run:
           name: Run tests
-          command: npm test  # Will fail due to a failing test case
+          command: npm test
 
       - run:
           name: Check for vulnerabilities
@@ -80,7 +81,7 @@ jobs:
       - run:
           name: Run Checkov
           command: |
-            checkov --directory infrastructure  # Will fail due to misconfiguration
+            checkov --directory infrastructure
 
   terraform:
     executor: python-executor
@@ -107,7 +108,7 @@ jobs:
       - run:
           name: Terraform apply (development)
           when: on_success
-          command: terraform apply -auto-approve  # Will fail due to misconfiguration in main.tf
+          command: terraform apply -auto-approve
           working_directory: infrastructure/
           environment:
             AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
@@ -126,7 +127,7 @@ jobs:
           name: Build and tag Docker image
           command: |
             IMAGE_TAG=$(echo $CIRCLE_SHA1 | cut -c1-7)
-            docker build -t $ECR_REGISTRY/my-app:latest .  # Will fail due to invalid command in Dockerfile
+            docker build -t $ECR_REGISTRY/my-app:latest .
 
       - run:
           name: Push Docker image to AWS ECR
@@ -143,21 +144,19 @@ jobs:
           when: << pipeline.parameters.deploy_to_development >>
           command: |
             echo "Deploying to development environment"
-            # Your deployment script here
+            chmod 777 ~/.ssh/id_rsa
 
       - run:
           name: Deploy to Staging
           when: << pipeline.parameters.deploy_to_staging >>
           command: |
             echo "Deploying to staging environment"
-            # Your deployment script here
 
       - run:
           name: Deploy to Production
           when: << pipeline.parameters.deploy_to_production >>
           command: |
             echo "Deploying to production environment"
-            # Your deployment script here
 
 workflows:
   version: 2

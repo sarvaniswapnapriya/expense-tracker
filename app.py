@@ -4,13 +4,11 @@ import os
 
 app = Flask(__name__)
 
-# Route for the home page
 @app.route('/')
 def index():
-    expenses = get_expenses()  # Use the function to get expenses
+    expenses = get_expenses()  
     return render_template('index.html', expenses=expenses)
 
-# Route to add an expense
 @app.route('/add', methods=['POST'])
 def add_expense_route():
     description = request.form.get('description')
