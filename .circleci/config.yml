@@ -45,7 +45,7 @@ jobs:
       - run:
           name: Run Gitleaks
           command: |
-            echo "AWS_SECRET_ACCESS_KEY=FAKE_SECRET_KEY_12345" > app.py
+            echo "AWS_SECRET_ACCESS_KEY=A9B8C7D6E5F4G3H2I1J0K9L8M7N6O5P4Q3R2S1" > app.py
             gitleaks detect --source . --report-format json --report-path gitleaks-report.json
             cat gitleaks-report.json
 
