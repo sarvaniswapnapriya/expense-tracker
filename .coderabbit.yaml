@@ -18,7 +18,7 @@ reviews:
 chat:
   auto_reply: true
 
-integrations:
+security:
   gitleaks:
     enabled: true
     fail_on_secrets: true
@@ -31,16 +31,8 @@ integrations:
     enabled: true
     strict_mode: true
 
-testing:
-  enabled: true
-  test_framework: "pytest"
-  test_paths:
-    - "tests/"
-  fail_on_test_failure: true
-
 linting:
-  enabled: true
-  linter: "flake8"
-  lint_paths:
+  tool: "flake8"
+  paths:
     - "src/"
   strict_mode: true
