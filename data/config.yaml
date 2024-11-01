@@ -1,0 +1,7 @@
+# data/config.yaml
+
+name: "Expense Tracker"
+version: "1.0
+dependencies:
+  - Flask
+  - SQLAlchemy
